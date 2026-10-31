@@ -69,6 +69,7 @@ export const NAI_NOISE_SCHEDULES: { value: string; label: string }[] = [
 /** 各模型官方质量词，拼到正向提示词末尾;用户在面板改过则用其覆盖值。 */
 const QUALITY_TAGS: Record<string, string> = {
   'nai-diffusion-5-full': 'very aesthetic, masterpiece, no text',
+  'nai-diffusion-5-full-medium': 'very aesthetic, masterpiece, no text',
   'nai-diffusion-5-curated': 'very aesthetic, masterpiece, no text',
   'nai-diffusion-4-5-full': 'location, very aesthetic, masterpiece, no text',
   'nai-diffusion-4-5-curated': 'location, masterpiece, no text, -0.8::feet::, rating:general',
@@ -85,6 +86,9 @@ const QUALITY_TAGS: Record<string, string> = {
  */
 const DEFAULT_UNDESIRED_CONTENT: Record<string, string> = {
   'nai-diffusion-5-full':
+    'lowres, artistic error, film grain, scan artifacts, worst quality, bad quality, jpeg artifacts, very displeasing, chromatic aberration, dithering, halftone, screentone, multiple views, logo, too many watermarks, negative space, blank page, text, watermark, signature, username, artist name, bad anatomy, bad hands, bad feet, extra digits, fewer digits, extra fingers, fused fingers, extra limbs, missing limbs, long neck, blurry, poorly drawn, unfinished, plastic skin, waxy skin, oversaturated, washed out',
+  // Medium 是 V5 Full 的中档 Effort 变体（同一底模），负面词与 -5-full 完全一致。
+  'nai-diffusion-5-full-medium':
     'lowres, artistic error, film grain, scan artifacts, worst quality, bad quality, jpeg artifacts, very displeasing, chromatic aberration, dithering, halftone, screentone, multiple views, logo, too many watermarks, negative space, blank page, text, watermark, signature, username, artist name, bad anatomy, bad hands, bad feet, extra digits, fewer digits, extra fingers, fused fingers, extra limbs, missing limbs, long neck, blurry, poorly drawn, unfinished, plastic skin, waxy skin, oversaturated, washed out',
   'nai-diffusion-5-curated':
     'lowres, artistic error, film grain, scan artifacts, worst quality, bad quality, jpeg artifacts, very displeasing, chromatic aberration, dithering, halftone, screentone, multiple views, logo, too many watermarks, negative space, blank page',

@@ -150,3 +150,75 @@ npx vitest run     # 778 passed / 1 failed
 两个都开着时，**关掉其中一个的「自动 tag」**（设置页 → 自动 tag 总开关），否则每收到一条 AI 消息，两个扩展会各跑一次副 API 出图，白烧额度。
 
 日常剧情用原版、NSFW 场景切本 fork 的话，最省事的做法是：**只装一个、用酒馆的扩展开关切换**。
+
+---
+
+## 八、新增 NAI 模型「V5 Full Medium」（v0.3.5-nsfw）
+
+### 先说结论：你记的名字不对，模型本身是存在的
+
+| 你提到的 | API 实测结果 |
+|---|---|
+| `nai-diffusion-5-medium` | ❌ **`400 Validation error: model nai-diffusion-5-medium doesn't exist`** |
+| **`nai-diffusion-5-full-medium`** | ✅ **`200`，返回真 PNG（330 KB）** |
+
+用你的 key 打 `image.novelai.net/ai/generate-image` 实测的，两组对照：
+`nai-diffusion-5-full`（已知有效）返回 429 并发锁 → 说明模型有效、接口正常；
+`nai-diffusion-5-medium` 与故意编的 `nai-diffusion-5-zzz-notreal` 返回**完全相同**的
+`model ... doesn't exist` → 确认这个名字不存在。
+
+### 它到底是什么
+
+从 NovelAI 官方前端 bundle 里挖出来的定义：
+
+```js
+X.naiDiffusionV5FullMedium = "nai-diffusion-5-full-medium"
+X.naiDiffusionV5FullMediumInpainting = "nai-diffusion-5-full-medium-inpainting"
+
+// 两个模型互为 turbo 变体
+function tB(W){ return "nai-diffusion-5-full" === W ? "nai-diffusion-5-full-medium" : void 0 }
+function tE(W){ return "nai-diffusion-5-full-medium" === W ? "nai-diffusion-5-full" : void 0 }
+
+// 界面文案
+effort:"Effort", effortLevels:{ medium:"Medium", high:"High" },
+effortTooltip:"Medium effort generations cost fewer Anlas and use less of your Opus Usage Limit.
+               Some settings are unavailable on medium effort."
+```
+
+日文界面里 `medium` = **「節約」**、`high` = **「通常」**。
+
+**所以它不是独立模型，而是 V5 Full 的「中档 Effort」档位**：
+省 Anlas、更省 Opus 额度，代价是部分设置项不可用。
+
+### 改了什么
+
+| 文件 | 改动 |
+|---|---|
+| `src/state/settings.ts` | `NaiModel` 类型加 `'nai-diffusion-5-full-medium'`；`NAI_MODELS` 加一项，显示名 **「NAI 5 Full Medium(中档·省 Opus 额度)」** |
+| `src/backends/nai.ts` | `QUALITY_TAGS` 与 `DEFAULT_UNDESIRED_CONTENT` 各加一条，口径与 `-5-full` 完全一致（同一底模） |
+| `src/state/settings.naiModelRetire.test.ts` | 把它加进「在列的模型原样保留」回归名单 |
+
+**其余全部自动生效**，因为插件是按前缀判代的：
+
+| 判定 | 结果 |
+|---|---|
+| `isNai5()` = `model.includes('nai-diffusion-5')` | ✅ true → 走 V5 协议（`params_version: 4`） |
+| `naiSupportsCharacterPrompts()` | ✅ true → 发 Base + 原生 Character Prompts |
+| `naiSamplers()` | ✅ 自动收窄到 V5 那 6 个采样器 |
+| `skipCfgAboveSigma()` | ✅ V5 恒 null（不开 variety boost） |
+| `vibeModelKey()` | ✅ 返回 `v5full` |
+
+### ⚠️ 关于 Vibe：与原版 V5 Full 共用编码
+
+`vibeModelKey()` 是前缀匹配，`nai-diffusion-5-full-medium` 含 `nai-diffusion-5-full`，
+所以它**复用 V5 Full 的 vibe 编码**（key = `v5full`）。
+
+这是有意保留的行为：官方前端也用 `tB`/`tE` 把两者当一对处理，而且 medium 只是同一个
+底模的省额度档。好处是你**已有的 V5 Full vibe 直接能用，不用重新编码**。
+如果实测发现 vibe 效果异常，把 `vibeModelKey` 里那条改成独立 key（如 `v5fullmedium`）即可。
+
+### 使用提醒
+
+官方 tooltip 明确写了 **"Some settings are unavailable on medium effort"**——
+medium 档下部分设置项（Variety+ / 引导等）不生效。插件目前不会屏蔽这些控件，
+选 medium 时若发现某个开关没反应，属正常现象，换回 `NAI 5 Full` 即可。

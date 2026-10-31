@@ -113,6 +113,7 @@ export interface ComfyUISettings extends BackendConn {
  */
 export type NaiModel =
   | 'nai-diffusion-5-full'
+  | 'nai-diffusion-5-full-medium'
   | 'nai-diffusion-5-curated'
   | 'nai-diffusion-4-5-full'
   | 'nai-diffusion-4-5-curated'
@@ -131,6 +132,7 @@ export type NaiModel =
  */
 export const NAI_MODELS: { value: NaiModel; label: string }[] = [
   { value: 'nai-diffusion-5-full', label: 'NAI 5 Full(最新,无过滤)' },
+  { value: 'nai-diffusion-5-full-medium', label: 'NAI 5 Full Medium(中档·省 Opus 额度)' },
   { value: 'nai-diffusion-5-curated', label: 'NAI 5 Curated(有内容过滤)' },
   { value: 'nai-diffusion-4-5-full', label: 'NAI 4.5 Full(无过滤)' },
   { value: 'nai-diffusion-4-5-curated', label: 'NAI 4.5 Curated(有内容过滤)' },

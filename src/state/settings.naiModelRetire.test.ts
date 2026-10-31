@@ -48,6 +48,7 @@ describe('NAI 旧模型下线后的存量模型处理', () => {
 
   it.each([
     'nai-diffusion-5-full',
+    'nai-diffusion-5-full-medium',
     'nai-diffusion-5-curated',
     'nai-diffusion-4-5-full',
     'nai-diffusion-4-5-curated',
