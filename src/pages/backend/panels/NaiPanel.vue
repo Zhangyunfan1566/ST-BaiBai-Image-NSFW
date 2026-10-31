@@ -1128,11 +1128,11 @@ async function removeVibe(vibe: NaiVibe) {
               class="bbi-input"
               type="text"
               v-model="settings.nai.portraitSize"
-              list="nai-portrait-presets"
+              list="nai-nsfw-portrait-presets"
               placeholder="832×1216"
               spellcheck="false"
             />
-            <datalist id="nai-portrait-presets">
+            <datalist id="nai-nsfw-portrait-presets">
               <option value="832×1216">竖版</option>
               <option value="1024×1536">大竖版</option>
               <option value="1024×1024">方图</option>
@@ -1146,11 +1146,11 @@ async function removeVibe(vibe: NaiVibe) {
               class="bbi-input"
               type="text"
               v-model="settings.nai.landscapeSize"
-              list="nai-landscape-presets"
+              list="nai-nsfw-landscape-presets"
               placeholder="1216×832"
               spellcheck="false"
             />
-            <datalist id="nai-landscape-presets">
+            <datalist id="nai-nsfw-landscape-presets">
               <option value="1216×832">横版</option>
               <option value="1536×1024">大横版</option>
               <option value="1024×1024">方图</option>

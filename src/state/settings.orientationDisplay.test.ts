@@ -20,7 +20,7 @@ vi.mock('@/st/context', () => ({
 
 async function hydrateWith(stored: Record<string, unknown>) {
   mocks.context = {
-    extensionSettings: { baibai_image: stored },
+    extensionSettings: { baibai_image_nsfw: stored },
     saveSettingsDebounced: vi.fn(),
   };
   const mod = await import('@/state/settings');

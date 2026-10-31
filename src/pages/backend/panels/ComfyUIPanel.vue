@@ -153,7 +153,7 @@ async function onFetchModels(silent = false) {
         lists.value.mode === 'server'
           ? '已拉取模型列表(ST 转发;LoRA/CLIP 需手输文件名)'
           : '已拉取模型列表',
-        '柏宝绘',
+        '柏宝绘·性爱聚焦',
       );
     }
   } catch (error) {
@@ -315,7 +315,7 @@ async function onAutoConfigure() {
   try {
     const result = await configureWorkflowWithAi(active.value.workflow);
     if (!result.changes.length) {
-      toastr.info('工作流中的动态参数已经配置，无需修改', '柏宝绘');
+      toastr.info('工作流中的动态参数已经配置，无需修改', '柏宝绘·性爱聚焦');
       return;
     }
     assistResult.value = result;
@@ -345,9 +345,9 @@ function applyAssist() {
     target.workflow = assistDraft.value;
     const name = target.name;
     closeAssist();
-    toastr.success(`已应用 AI 配置的工作流（${name}）`, '柏宝绘');
+    toastr.success(`已应用 AI 配置的工作流（${name}）`, '柏宝绘·性爱聚焦');
     if (placeholders.includes('nl') && !target.naturalLanguage) {
-      toastr.info('工作流已配置 %nl%；需要时请开启「生成自然语言」', '柏宝绘');
+      toastr.info('工作流已配置 %nl%；需要时请开启「生成自然语言」', '柏宝绘·性爱聚焦');
     }
   } catch (error) {
     toastr.error(errorMessage(error), '工作流无法应用');
@@ -492,11 +492,11 @@ function applyAssist() {
             class="bbi-input wf-size"
             type="text"
             v-model="active.portraitSize"
-            list="comfy-portrait-presets"
+            list="comfy-nsfw-portrait-presets"
             placeholder="832×1216"
             spellcheck="false"
           />
-          <datalist id="comfy-portrait-presets">
+          <datalist id="comfy-nsfw-portrait-presets">
             <option value="832×1216">竖版</option>
             <option value="1024×1536">大竖版</option>
             <option value="1024×1024">方图</option>
@@ -509,11 +509,11 @@ function applyAssist() {
             class="bbi-input wf-size"
             type="text"
             v-model="active.landscapeSize"
-            list="comfy-landscape-presets"
+            list="comfy-nsfw-landscape-presets"
             placeholder="1216×832"
             spellcheck="false"
           />
-          <datalist id="comfy-landscape-presets">
+          <datalist id="comfy-nsfw-landscape-presets">
             <option value="1216×832">横版</option>
             <option value="1536×1024">大横版</option>
             <option value="1024×1024">方图</option>

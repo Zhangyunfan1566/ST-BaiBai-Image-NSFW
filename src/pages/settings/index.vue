@@ -500,9 +500,9 @@ async function confirmUpdate() {
   const toastr = (globalThis as Record<string, any>).toastr;
   try {
     await performUpdate();
-    toastr?.success?.('更新成功,正在刷新页面…', '柏宝绘');
+    toastr?.success?.('更新成功,正在刷新页面…', '柏宝绘·性爱聚焦');
   } catch (error) {
-    toastr?.error?.(`更新失败:${error instanceof Error ? error.message : String(error)}`, '柏宝绘');
+    toastr?.error?.(`更新失败:${error instanceof Error ? error.message : String(error)}`, '柏宝绘·性爱聚焦');
   }
 }
 </script>
@@ -539,7 +539,7 @@ async function confirmUpdate() {
     <!-- 总开关:整个插件的主控。全页唯一的大号滑动开关,与下方各项的小复选框拉开层级。 -->
     <div class="bbi-master" :class="{ 'is-off': !settings.enabled }">
       <span class="bbi-master-spine" aria-hidden="true"></span>
-      <span class="bbi-master-title">柏宝绘 · 文生图</span>
+      <span class="bbi-master-title">柏宝绘·性爱聚焦 · 文生图</span>
       <button
         type="button"
         role="switch"

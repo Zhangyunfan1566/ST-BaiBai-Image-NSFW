@@ -115,3 +115,38 @@ npx vitest run     # 778 passed / 1 failed
 
 - 上游：`baibai-git/ST-BaiBai-Image`（作者：柏柏），MIT 未声明许可，本 fork 沿用上游约定，仅作个人使用与分享。
 - 本 fork 只改内置提示词文本，未改任何逻辑代码。
+
+---
+
+## 七、与原版柏宝绘共存（v0.3.4-nsfw）
+
+原版柏宝绘装在同一台酒馆里时，会有几处**硬冲突**——不是重名不好看的问题，是功能上会互相踩。本 fork 已全部隔离：
+
+| # | 冲突点 | 原版的值 | 本 fork | 不改会怎样 |
+|---|---|---|---|---|
+| 1 | **扩展目录名** | `ST-BaiBai-Image` | `ST-BaiBai-Image-NSFW` | 酒馆提示「已安装」，根本装不上 |
+| 2 | **设置命名空间** | `extensionSettings['baibai_image']` | `['baibai_image_nsfw']` | 两个扩展共用一份配置，互相覆盖 |
+| 3 | **顶栏按钮 id** | `bbi-topbar-button` | `bbi-nsfw-topbar-button` | `getElementById` 只命中先注入的，第二个永远不出现 |
+| 4 | **顶栏样式 id** | `bbi-topbar-style` | `bbi-nsfw-topbar-style` | 样式互相覆盖 |
+| 5 | **datalist id** | `nai-portrait-presets` 等 4 个 | 加 `-nsfw` 后缀 | 两套面板同时渲染时 id 撞车，预设下拉失灵 |
+| 6 | **公共 API 全局名** | `globalThis.STBaiBaiImage` | 主名被占则退到 `STBaiBaiImageNsfw` | 后加载的把先加载的覆盖掉，第三方（柏宝书）拿到哪个看运气 |
+| 7 | **公共事件名** | `st-baibai-image:ready/changed` | `st-baibai-image-nsfw:ready/changed` | 第三方收到双份通知 |
+| 8 | **自更新地址** | 写死指向上游 `baibai-git/...` | 指向本 fork | **点一次「检查更新」就把改过的提示词覆盖回上游版本** |
+| 9 | **显示名** | 柏宝绘 | 柏宝绘·性爱聚焦 | UI 里分不清哪个是哪个 |
+
+### 有意保持共享的部分
+
+这几处**故意不改**——它们本来就是「柏宝」系插件之间的共享数据，带 `revision` + 广播事件做跨插件同步：
+
+- `extensionSettings['baibai_api_channels']` —— 副 API 渠道列表
+- `extensionSettings['baibai_exclude_settings']` —— 排除名单（与柏宝书共用）
+- `extensionSettings['baibai_image_char_global']` —— 全局角色外貌库
+- 对应的事件名 `st-baibai-api-channels:changed` 等
+
+**好处**：两个扩展共用同一套渠道、同一份排除名单、同一个角色外貌库 —— 你在原版里建过的角色，切到本 fork 直接能用，不会「换一个扩展换一张脸」。
+
+### 共存后的使用建议
+
+两个都开着时，**关掉其中一个的「自动 tag」**（设置页 → 自动 tag 总开关），否则每收到一条 AI 消息，两个扩展会各跑一次副 API 出图，白烧额度。
+
+日常剧情用原版、NSFW 场景切本 fork 的话，最省事的做法是：**只装一个、用酒馆的扩展开关切换**。

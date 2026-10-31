@@ -1087,7 +1087,7 @@ export interface ImageSettings {
 }
 
 // extension_settings 里的命名空间键。
-const SETTINGS_KEY = 'baibai_image';
+const SETTINGS_KEY = 'baibai_image_nsfw'; // 与原版柏宝绘隔离：两个扩展各存一份设置
 
 /** 内置默认条目名规则:共享存储创建时播种(与柏宝书 DEFAULT_WI_PATTERNS 同值)。 */
 const DEFAULT_WI_PATTERNS = ['\\[mvu[\\s\\S]*?\\]'];

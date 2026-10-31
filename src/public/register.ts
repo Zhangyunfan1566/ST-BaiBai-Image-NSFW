@@ -31,8 +31,15 @@ import {
  * 只给其中一条,另一半场合的第三方就得写轮询——那是我们的锅,不是它的。
  */
 
-export const PUBLIC_READY_EVENT = 'st-baibai-image:ready';
-export const PUBLIC_CHANGED_EVENT = 'st-baibai-image:changed';
+/** 与原版柏宝绘共存：主名被原版占用时，本 fork 退到带后缀的名字，不互相覆盖。 */
+const PUBLIC_API_KEY_PRIMARY = 'STBaiBaiImage';
+const PUBLIC_API_KEY_FALLBACK = 'STBaiBaiImageNsfw';
+const PUBLIC_READY_EVENT_PRIMARY = 'st-baibai-image:ready';
+const PUBLIC_CHANGED_EVENT_PRIMARY = 'st-baibai-image:changed';
+let ownsPrimaryName = false;
+
+export const PUBLIC_READY_EVENT = 'st-baibai-image-nsfw:ready';
+export const PUBLIC_CHANGED_EVENT = 'st-baibai-image-nsfw:changed';
 
 const capabilities: PublicCapabilities = {
   globalApi: true,
@@ -73,11 +80,16 @@ function emitNotice(type: PublicChangeNotice['type']): void {
     try {
       listener(clonePublic(detail));
     } catch (error) {
-      console.warn('[柏宝绘] 公共接口订阅回调异常', error);
+      console.warn('[柏宝绘·性爱聚焦] 公共接口订阅回调异常', error);
     }
   }
   const eventName = type === 'ready' ? PUBLIC_READY_EVENT : PUBLIC_CHANGED_EVENT;
   window.dispatchEvent(new CustomEvent(eventName, { detail: clonePublic(detail) }));
+  // 只有在主名没被原版占走时才顺带发主事件，避免第三方收到双份通知
+  if (ownsPrimaryName) {
+    const primaryName = type === 'ready' ? PUBLIC_READY_EVENT_PRIMARY : PUBLIC_CHANGED_EVENT_PRIMARY;
+    window.dispatchEvent(new CustomEvent(primaryName, { detail: clonePublic(detail) }));
+  }
 }
 
 /**
@@ -126,7 +138,12 @@ export function registerPublicInterface(): void {
 
   bumpPublicRevision();
   const api = createApi();
-  (globalThis as typeof globalThis & { STBaiBaiImage?: STBaiBaiImageApi }).STBaiBaiImage = api;
+  const scope = globalThis as typeof globalThis & Record<string, unknown>;
+  // 主名空着（没装原版）才占主名，让柏宝书这类第三方照旧能找到接口；
+  // 原版也在跑时让出主名，本 fork 只挂带后缀的那个。
+  ownsPrimaryName = !scope[PUBLIC_API_KEY_PRIMARY];
+  scope[PUBLIC_API_KEY_FALLBACK] = api;
+  if (ownsPrimaryName) scope[PUBLIC_API_KEY_PRIMARY] = api;
 
   // 角色库是响应式派生结果,一律 watch 它本身,不去逐个订阅那些**导致**它变的事件
   // (CHAT_CHANGED / 删楼 / 滑动 / 用户手动编辑 / 柏宝书同步……漏一个就少一次通知)。
@@ -134,5 +151,5 @@ export function registerPublicInterface(): void {
 
   ready = true;
   emitNotice('ready');
-  console.log('[柏宝绘] 公共接口已就绪', clonePublic(capabilities));
+  console.log('[柏宝绘·性爱聚焦] 公共接口已就绪', clonePublic(capabilities));
 }

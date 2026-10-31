@@ -1,8 +1,8 @@
 import { openPanel } from '@/state/ui';
 import { ensureIconFallback } from '@/st/iconFallback';
 
-const BTN_ID = 'bbi-topbar-button';
-const STYLE_ID = 'bbi-topbar-style';
+const BTN_ID = 'bbi-nsfw-topbar-button'; // 与原版隔离：getElementById 会命中先注入的那个
+const STYLE_ID = 'bbi-nsfw-topbar-style';
 
 function ensureStyle(): void {
   // 美化主题可能清空顶栏图标字形,用高特异性选择器强制还原(见 iconFallback)
@@ -27,7 +27,7 @@ function buildButton(): HTMLElement {
   btn.className = 'drawer';
   btn.innerHTML = `
     <div class="drawer-toggle">
-      <div class="drawer-icon fa-solid fa-palette fa-fw closedIcon" title="柏宝绘"></div>
+      <div class="drawer-icon fa-solid fa-palette fa-fw closedIcon" title="柏宝绘·性爱聚焦"></div>
     </div>
   `;
   // 仅打开窗口,不走 ST 的抽屉开合逻辑(故未挂 .drawer-toggle 的 doNavbarIconClick)
